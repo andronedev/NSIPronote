@@ -104,17 +104,24 @@ def liste_tri() -> list:
 
 fenetre = tk.Tk()
 fenetre.title("Pas Pronote")
-fenetre.geometry('550x500')
-# fenetre['bg'] = '#134D32'
 
+fenetre.geometry('600x400+0+0')
+fenetre.columnconfigure(0, weight=1)
+fenetre.rowconfigure(0, weight=1)
+fenetre['bg'] = '#134D32'
+
+style = ttk.Style(fenetre)
+style.configure('TNotebook.Tab', width=fenetre.winfo_screenwidth())
+style.configure('TFrame', background='#134D32')
 tab_parent = ttk.Notebook(fenetre)
 
 TAB1 = ttk.Frame(tab_parent)
 TAB2 = ttk.Frame(tab_parent)
+
+
 tab_parent.add(TAB1, text="General")
 tab_parent.add(TAB2, text="Tableau des notes")
-tab_parent.grid()
-# tab_parent.pack(expand=1, fill='both')
+tab_parent.grid(row=0, column=0, sticky='nsew')
 
 
 tk.Label(TAB1, text="Nom de l'élève", bg = '#134D32', fg = '#FFFFFF').grid(row=0)
@@ -161,30 +168,15 @@ tk.Button(TAB1, text="Calculer la moyenne du devoir.",
 
 
 
+tv = ttk.Treeview(TAB2, columns=range(len(dico)), show='headings', height=8)
+tv.grid()
 
-
-nbcolumn = 0
-for eleve,eleve_info in dico.items():
-    nbrow = 0
-    for matiere,note in eleve_info["Notes"].items():
-        # pour afficher le nom du devoir :
-        if nbcolumn == 0 and nbrow !=0:
-            textcase = matiere
-        else :
-            textcase = note
-        if nbrow==0:
-            textcase = eleve
-        frame = tk.Frame(
-            master=TAB2,
-            relief=tk.FLAT,
-            borderwidth=1
-        )
-        frame.grid(row=nbrow, column=nbcolumn, padx=2, pady=2)
-        label = tk.Label(master=frame, text=textcase)
-        label.pack()
-        nbrow +=1
-    nbcolumn += 1
-
+i = 0
+for eleve_info in dico.values():
+    for matiere,note in eleve_info["Notes"]:
+        tv.heading(i, text=matiere)
+        tv.insert(parent='', index=i, iid=i, values=note)
+        i+=1
 
 
 
