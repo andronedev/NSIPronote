@@ -1,6 +1,7 @@
 # Importations :
 import csv
 import tkinter as tk
+from tkinter import ttk
 
 
 # Transformation du fichier resultat.csv en dictionnaire :
@@ -103,19 +104,29 @@ def liste_tri() -> list:
 
 fenetre = tk.Tk()
 fenetre.title("Pas Pronote")
-fenetre.geometry('500x200')
-fenetre['bg'] = '#134D32'
+fenetre.geometry('550x500')
+# fenetre['bg'] = '#134D32'
 
-tk.Label(fenetre, text="Nom de l'élève", bg = '#134D32', fg = '#FFFFFF').grid(row=0)
-tk.Label(fenetre, text="Nom du devoir", bg = '#134D32', fg = '#FFFFFF').grid(row=2)
+tab_parent = ttk.Notebook(fenetre)
 
-nom_eleve = tk.Entry(fenetre)
-nom_devoir = tk.Entry(fenetre)
+TAB1 = ttk.Frame(tab_parent)
+TAB2 = ttk.Frame(tab_parent)
+tab_parent.add(TAB1, text="General")
+tab_parent.add(TAB2, text="Tableau des notes")
+tab_parent.grid()
+# tab_parent.pack(expand=1, fill='both')
+
+
+tk.Label(TAB1, text="Nom de l'élève", bg = '#134D32', fg = '#FFFFFF').grid(row=0)
+tk.Label(TAB1, text="Nom du devoir", bg = '#134D32', fg = '#FFFFFF').grid(row=2)
+
+nom_eleve = tk.Entry(TAB1)
+nom_devoir = tk.Entry(TAB1)
 
 nom_eleve.grid(row=0, column=1, sticky=tk.W, pady=4)
 nom_devoir.grid(row=2, column=1, sticky=tk.W, pady=4)
 
-resultat = tk.Label(fenetre, text="Resultat")
+resultat = tk.Label(TAB1, text="Resultat")
 
 resultat.grid(row=5, column=1, columnspan=2)
 
@@ -128,7 +139,7 @@ def calc_eleve():
         resultat.configure(text=msg)
 
 
-tk.Button(fenetre, text="Calculer la moyenne de l'élève.",
+tk.Button(TAB1, text="Calculer la moyenne de l'élève.",
           command=calc_eleve,
            bg = '#1D6D4A',
            fg = '#FFFFFF').grid(row=1, column=1, sticky=tk.W, pady=4)
@@ -142,7 +153,7 @@ def calc_devoir():
         resultat.configure(text=msg)
 
 
-tk.Button(fenetre, text="Calculer la moyenne du devoir.",
+tk.Button(TAB1, text="Calculer la moyenne du devoir.",
           command=calc_devoir,
           bg = '#1D6D4A',
           fg = '#FFFFFF' ).grid(row=3, column=1, sticky=tk.W, pady=4)
@@ -151,40 +162,31 @@ tk.Button(fenetre, text="Calculer la moyenne du devoir.",
 
 
 
-def fenetre_tableau():
-    newWindow = tk.Toplevel(fenetre)
-    fenetre.geometry('500x200')
-    fenetre['bg'] = '#134D32'
+
+nbcolumn = 0
+for eleve,eleve_info in dico.items():
+    nbrow = 0
+    for matiere,note in eleve_info["Notes"].items():
+        # pour afficher le nom du devoir :
+        if nbcolumn == 0 and nbrow !=0:
+            textcase = matiere
+        else :
+            textcase = note
+        if nbrow==0:
+            textcase = eleve
+        frame = tk.Frame(
+            master=TAB2,
+            relief=tk.FLAT,
+            borderwidth=1
+        )
+        frame.grid(row=nbrow, column=nbcolumn, padx=2, pady=2)
+        label = tk.Label(master=frame, text=textcase)
+        label.pack()
+        nbrow +=1
+    nbcolumn += 1
 
 
-    nbcolumn = 0
-    for eleve,eleve_info in dico.items():
-        nbrow = 0
-        for matiere,note in eleve_info["Notes"].items():
-            # pour afficher le nom du devoir :
-            if nbcolumn == 0 and nbrow !=0:
-                textcase = matiere
-            else :
-                textcase = note
-            if nbrow==0:
-                textcase = eleve
-            frame = tk.Frame(
-                master=newWindow,
-                relief=tk.RAISED,
-                borderwidth=1
-            )
-            frame.grid(row=nbrow, column=nbcolumn, padx=5, pady=5)
-            label = tk.Label(master=frame, text=textcase)
-            label.pack()
-            nbrow +=1
-        nbcolumn += 1
 
-
-tk.Button(fenetre,
-  text="Elèves et devoirs enregistrés",
-  command=fenetre_tableau,
-  bg = '#1D6D4A',
-  fg = '#FFFFFF').grid(row=4,column=1)
 
 
 
